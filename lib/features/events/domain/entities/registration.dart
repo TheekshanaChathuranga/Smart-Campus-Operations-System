@@ -5,6 +5,7 @@ class Registration {
   final int eventId;
   final String qrCode;
   final DateTime registeredAt;
+  final String status; // 'registered' | 'attended'
 
   const Registration({
     required this.id,
@@ -12,5 +13,9 @@ class Registration {
     required this.eventId,
     required this.qrCode,
     required this.registeredAt,
+    this.status = 'registered',
   });
+
+  bool get isAttended => status == 'attended';
 }
+

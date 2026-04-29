@@ -19,4 +19,52 @@ class TimetableRepositoryImpl implements ITimetableRepository {
     final models = await _localDataSource.getAllSchedule();
     return models.map((m) => m.toEntity()).toList();
   }
+
+  @override
+  Future<void> createSchedule({
+    required String subject,
+    required String instructor,
+    required String day,
+    required String startTime,
+    required String endTime,
+    required String room,
+    int color = 0xFF6C63FF,
+  }) async {
+    await _localDataSource.insertEntry({
+      'subject': subject,
+      'instructor': instructor,
+      'day': day,
+      'start_time': startTime,
+      'end_time': endTime,
+      'room': room,
+      'color': color,
+    });
+  }
+
+  @override
+  Future<void> updateSchedule(
+    int id, {
+    required String subject,
+    required String instructor,
+    required String day,
+    required String startTime,
+    required String endTime,
+    required String room,
+    int color = 0xFF6C63FF,
+  }) async {
+    await _localDataSource.updateEntry(id, {
+      'subject': subject,
+      'instructor': instructor,
+      'day': day,
+      'start_time': startTime,
+      'end_time': endTime,
+      'room': room,
+      'color': color,
+    });
+  }
+
+  @override
+  Future<void> deleteSchedule(int id) async {
+    await _localDataSource.deleteEntry(id);
+  }
 }

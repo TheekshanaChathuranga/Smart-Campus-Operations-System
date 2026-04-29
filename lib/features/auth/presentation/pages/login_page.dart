@@ -31,10 +31,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
       duration: const Duration(milliseconds: 800),
     );
     _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic));
+    _slideAnim = Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+        );
     _animController.forward();
   }
 
@@ -48,10 +48,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   void _login() {
     if (_formKey.currentState?.validate() ?? false) {
-      ref.read(authNotifierProvider.notifier).login(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
+      ref
+          .read(authNotifierProvider.notifier)
+          .login(_emailController.text.trim(), _passwordController.text);
     }
   }
 
@@ -85,7 +84,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
               child: SlideTransition(
                 position: _slideAnim,
                 child: SizedBox(
-                  height: size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+                  height:
+                      size.height -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -156,7 +158,9 @@ class _LoginPageState extends ConsumerState<LoginPage>
                               onFieldSubmitted: (_) => _login(),
                               decoration: InputDecoration(
                                 labelText: AppStrings.password,
-                                prefixIcon: const Icon(Icons.lock_outline_rounded),
+                                prefixIcon: const Icon(
+                                  Icons.lock_outline_rounded,
+                                ),
                                 hintText: '••••••••',
                                 suffixIcon: IconButton(
                                   icon: Icon(
@@ -165,7 +169,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                                         : Icons.visibility_outlined,
                                   ),
                                   onPressed: () {
-                                    setState(() => _obscurePassword = !_obscurePassword);
+                                    setState(
+                                      () =>
+                                          _obscurePassword = !_obscurePassword,
+                                    );
                                   },
                                 ),
                               ),
@@ -204,37 +211,6 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       ),
 
                       const Spacer(flex: 2),
-
-                      // ─── Demo Credentials ───────────────
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Demo Credentials',
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Student: student@campus.edu / password\nStaff: staff@campus.edu / password',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

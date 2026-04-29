@@ -26,6 +26,10 @@ class AnnouncementModel {
     );
   }
 
+  factory AnnouncementModel.fromMap(Map<String, dynamic> map) =>
+      AnnouncementModel.fromJson(map);
+
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

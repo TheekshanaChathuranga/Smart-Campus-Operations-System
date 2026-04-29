@@ -66,4 +66,15 @@ class NotificationService {
     // await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
     debugPrint('[Notifications] Unsubscribed from topic: $topic');
   }
+
+  /// Send an urgent push notification (stub).
+  /// In a real app, this would typically trigger a cloud function or backend API 
+  /// which then uses the Firebase Admin SDK to send the message.
+  Future<void> sendPushNotification(String title, String body, {required String topic}) async {
+    // Example: await dio.post('/api/notifications/send', data: {...});
+    debugPrint('[Notifications] 🚀 URGENT PUSH NOTIFICATION SENT to topic "$topic"');
+    debugPrint('[Notifications] Title: $title');
+    debugPrint('[Notifications] Body: $body');
+  }
 }
+

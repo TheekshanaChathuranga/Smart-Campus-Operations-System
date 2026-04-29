@@ -53,6 +53,20 @@ class TimetableLocalDataSource {
     }
   }
 
+  Future<int> updateEntry(int id, Map<String, dynamic> data) async {
+    try {
+      final db = await _dbHelper.database;
+      return await db.update(
+        Schema.timetableTable,
+        data,
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      throw DatabaseException('Failed to update timetable entry: $e');
+    }
+  }
+
   Future<int> deleteEntry(int id) async {
     try {
       final db = await _dbHelper.database;
@@ -66,3 +80,4 @@ class TimetableLocalDataSource {
     }
   }
 }
+

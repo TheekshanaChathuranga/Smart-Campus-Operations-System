@@ -26,6 +26,7 @@ import 'package:smart_campus_operations_system/features/events/domain/usecases/r
 import 'package:smart_campus_operations_system/features/events/presentation/providers/event_notifier.dart';
 
 // Announcements
+import 'package:smart_campus_operations_system/features/announcements/data/datasources/announcement_local_ds.dart';
 import 'package:smart_campus_operations_system/features/announcements/data/datasources/announcement_remote_ds.dart';
 import 'package:smart_campus_operations_system/features/announcements/data/repositories/announcement_repository_impl.dart';
 import 'package:smart_campus_operations_system/features/announcements/domain/repositories/i_announcement_repository.dart';
@@ -37,6 +38,11 @@ import 'package:smart_campus_operations_system/features/campus_map/data/datasour
 import 'package:smart_campus_operations_system/features/campus_map/data/repositories/map_repository_impl.dart';
 import 'package:smart_campus_operations_system/features/campus_map/domain/usecases/get_current_location_usecase.dart';
 import 'package:smart_campus_operations_system/features/campus_map/presentation/providers/map_notifier.dart';
+
+// Staff
+import 'package:smart_campus_operations_system/features/qr_scanner/presentation/providers/staff_checkin_notifier.dart';
+import 'package:smart_campus_operations_system/features/staff/presentation/providers/staff_event_notifier.dart';
+import 'package:smart_campus_operations_system/features/staff/presentation/providers/staff_timetable_notifier.dart';
 
 // ─── Core Providers ────────────────────────────────────────
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
@@ -110,21 +116,46 @@ final eventNotifierProvider = StateNotifierProvider<EventNotifier, EventState>((
   return EventNotifier(ref.read(eventRepositoryProvider));
 });
 
+// ─── Staff Providers ───────────────────────────────────────
+final staffEventNotifierProvider = StateNotifierProvider<StaffEventNotifier, StaffEventState>((ref) {
+  return StaffEventNotifier(ref.read(eventRepositoryProvider), ref);
+});
+
+final staffCheckinNotifierProvider =
+    StateNotifierProvider<StaffCheckinNotifier, StaffCheckinState>((ref) {
+  return StaffCheckinNotifier(ref.read(eventRepositoryProvider));
+});
+
+final staffTimetableNotifierProvider = StateNotifierProvider<StaffTimetableNotifier, StaffTimetableState>((ref) {
+  return StaffTimetableNotifier(ref.read(timetableRepositoryProvider));
+});
+
 // ─── Announcements Providers ───────────────────────────────
 final announcementRemoteDsProvider = Provider<AnnouncementRemoteDataSource>((ref) {
   return AnnouncementRemoteDataSource(ref.read(dioProvider));
 });
 
+final announcementLocalDsProvider = Provider<AnnouncementLocalDataSource>((ref) {
+  return AnnouncementLocalDataSource(ref.read(databaseHelperProvider));
+});
+
 final announcementRepositoryProvider = Provider<IAnnouncementRepository>((ref) {
-  return AnnouncementRepositoryImpl(ref.read(announcementRemoteDsProvider));
+  return AnnouncementRepositoryImpl(
+    ref.read(announcementRemoteDsProvider),
+    ref.read(announcementLocalDsProvider),
+  );
 });
 
 final getAnnouncementsUseCaseProvider = Provider<GetAnnouncementsUseCase>((ref) {
   return GetAnnouncementsUseCase(ref.read(announcementRepositoryProvider));
 });
 
-final announcementNotifierProvider = StateNotifierProvider<AnnouncementNotifier, AnnouncementState>((ref) {
-  return AnnouncementNotifier(ref.read(getAnnouncementsUseCaseProvider));
+final announcementNotifierProvider =
+    StateNotifierProvider<AnnouncementNotifier, AnnouncementState>((ref) {
+  return AnnouncementNotifier(
+    ref.read(getAnnouncementsUseCaseProvider),
+    ref.read(announcementRepositoryProvider),
+  );
 });
 
 // ─── Campus Map Providers ──────────────────────────────────

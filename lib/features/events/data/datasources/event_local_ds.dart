@@ -10,12 +10,14 @@ class EventLocalDataSource {
 
   EventLocalDataSource(this._dbHelper);
 
+  // ─── Events ────────────────────────────────────────
+
   /// Get all events with registration count.
   Future<List<EventModel>> getAllEvents() async {
     try {
       final db = await _dbHelper.database;
       final results = await db.rawQuery('''
-        SELECT e.*, 
+        SELECT e.*,
           (SELECT COUNT(*) FROM ${Schema.registrationsTable} r WHERE r.event_id = e.id) as registered_count
         FROM ${Schema.eventsTable} e
         ORDER BY e.date ASC
@@ -31,7 +33,7 @@ class EventLocalDataSource {
     try {
       final db = await _dbHelper.database;
       final results = await db.rawQuery('''
-        SELECT e.*, 
+        SELECT e.*,
           (SELECT COUNT(*) FROM ${Schema.registrationsTable} r WHERE r.event_id = e.id) as registered_count
         FROM ${Schema.eventsTable} e
         WHERE e.id = ?
@@ -42,6 +44,43 @@ class EventLocalDataSource {
       throw DatabaseException('Failed to fetch event: $e');
     }
   }
+
+  /// Insert a new event (staff only).
+  Future<int> insertEvent(Map<String, dynamic> data) async {
+    try {
+      final db = await _dbHelper.database;
+      return await db.insert(Schema.eventsTable, data);
+    } catch (e) {
+      throw DatabaseException('Failed to create event: $e');
+    }
+  }
+
+  /// Update an existing event (staff only).
+  Future<void> updateEvent(int id, Map<String, dynamic> data) async {
+    try {
+      final db = await _dbHelper.database;
+      await db.update(
+        Schema.eventsTable,
+        data,
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      throw DatabaseException('Failed to update event: $e');
+    }
+  }
+
+  /// Delete an event by ID (staff only).
+  Future<void> deleteEvent(int id) async {
+    try {
+      final db = await _dbHelper.database;
+      await db.delete(Schema.eventsTable, where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      throw DatabaseException('Failed to delete event: $e');
+    }
+  }
+
+  // ─── Registrations ─────────────────────────────────
 
   /// Register a user for an event.
   Future<int> registerForEvent(Map<String, dynamic> data) async {
@@ -83,6 +122,41 @@ class EventLocalDataSource {
       return results.map((map) => RegistrationModel.fromMap(map)).toList();
     } catch (e) {
       throw DatabaseException('Failed to fetch registrations: $e');
+    }
+  }
+
+  // ─── QR Check-in (Staff) ───────────────────────────
+
+  /// Fetch a registration record with joined student name and event title.
+  Future<Map<String, dynamic>?> getRegistrationByQrCode(String qrCode) async {
+    try {
+      final db = await _dbHelper.database;
+      final results = await db.rawQuery('''
+        SELECT r.*, u.name as student_name, e.title as event_title
+        FROM ${Schema.registrationsTable} r
+        JOIN ${Schema.usersTable} u ON r.user_id = u.id
+        JOIN ${Schema.eventsTable} e ON r.event_id = e.id
+        WHERE r.qr_code = ?
+      ''', [qrCode]);
+      if (results.isEmpty) return null;
+      return results.first;
+    } catch (e) {
+      throw DatabaseException('Failed to look up QR code: $e');
+    }
+  }
+
+  /// Mark a registration as attended.
+  Future<void> markAttended(String qrCode) async {
+    try {
+      final db = await _dbHelper.database;
+      await db.update(
+        Schema.registrationsTable,
+        {'status': 'attended'},
+        where: 'qr_code = ?',
+        whereArgs: [qrCode],
+      );
+    } catch (e) {
+      throw DatabaseException('Failed to mark attendance: $e');
     }
   }
 }
