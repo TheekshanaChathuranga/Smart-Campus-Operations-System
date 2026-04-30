@@ -11,7 +11,7 @@ class DatabaseHelper {
   Database? _database;
 
   static const String _dbName = 'smart_campus.db';
-  static const int _dbVersion = 1;
+  static const int _dbVersion = 2;
 
   /// Returns the database instance, initializing if necessary.
   Future<Database> get database async {
@@ -49,7 +49,12 @@ class DatabaseHelper {
 
   /// Handle migrations.
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Future migrations go here
+    if (oldVersion < 2) {
+      // Add status column to registrations
+      await db.execute(Schema.migrateRegistrationsAddStatus);
+      // Add announcements table
+      await db.execute(Schema.createAnnouncementsTable);
+    }
   }
 
   /// Insert sample data so the app works out of the box.

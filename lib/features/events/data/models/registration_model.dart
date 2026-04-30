@@ -7,6 +7,7 @@ class RegistrationModel {
   final int eventId;
   final String qrCode;
   final String registeredAt;
+  final String status;
 
   const RegistrationModel({
     required this.id,
@@ -14,6 +15,7 @@ class RegistrationModel {
     required this.eventId,
     required this.qrCode,
     required this.registeredAt,
+    this.status = 'registered',
   });
 
   factory RegistrationModel.fromMap(Map<String, dynamic> map) {
@@ -23,6 +25,7 @@ class RegistrationModel {
       eventId: map['event_id'] as int,
       qrCode: map['qr_code'] as String,
       registeredAt: map['registered_at'] as String,
+      status: map['status'] as String? ?? 'registered',
     );
   }
 
@@ -41,6 +44,7 @@ class RegistrationModel {
       eventId: eventId,
       qrCode: qrCode,
       registeredAt: DateTime.tryParse(registeredAt) ?? DateTime.now(),
+      status: status,
     );
   }
 }

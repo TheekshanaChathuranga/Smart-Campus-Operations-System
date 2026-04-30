@@ -4,7 +4,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:smart_campus_operations_system/core/di/providers.dart';
 
-
 class CampusMapPage extends ConsumerStatefulWidget {
   const CampusMapPage({super.key});
 
@@ -37,6 +36,12 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
         return Icons.hotel_rounded;
       case 'venue':
         return Icons.theater_comedy_rounded;
+      case 'admin':
+        return Icons.admin_panel_settings_rounded;
+      case 'maintenance':
+        return Icons.engineering_rounded;
+      case 'union':
+        return Icons.groups_rounded;
       default:
         return Icons.place_rounded;
     }
@@ -58,6 +63,12 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
         return const Color(0xFFAB47BC);
       case 'venue':
         return const Color(0xFF03DAC6);
+      case 'admin':
+        return const Color(0xFF1E88E5);
+      case 'maintenance':
+        return const Color(0xFFF4511E);
+      case 'union':
+        return const Color(0xFF00897B);
       default:
         return const Color(0xFF6C63FF);
     }
@@ -67,7 +78,7 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(mapNotifierProvider);
     final theme = Theme.of(context);
-    final center = state.userLocation ?? const LatLng(12.9716, 77.5946);
+    final center = state.userLocation ?? const LatLng(6.0636, 80.5408);
 
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +108,7 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
             mapController: _mapController,
             options: MapOptions(
               initialCenter: center,
-              initialZoom: 16,
+              initialZoom: 17.0,
               onTap: (_, _) {
                 ref.read(mapNotifierProvider.notifier).selectLandmark(null);
               },
@@ -120,7 +131,9 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
                     height: isSelected ? 56 : 44,
                     child: GestureDetector(
                       onTap: () {
-                        ref.read(mapNotifierProvider.notifier).selectLandmark(landmark);
+                        ref
+                            .read(mapNotifierProvider.notifier)
+                            .selectLandmark(landmark);
                       },
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
@@ -199,7 +212,9 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
                 },
                 child: Card(
                   elevation: 8,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Row(
@@ -207,13 +222,16 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
                         Container(
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: _getCategoryColor(state.selectedLandmark!.category)
-                                .withValues(alpha: 0.12),
+                            color: _getCategoryColor(
+                              state.selectedLandmark!.category,
+                            ).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Icon(
                             _getCategoryIcon(state.selectedLandmark!.category),
-                            color: _getCategoryColor(state.selectedLandmark!.category),
+                            color: _getCategoryColor(
+                              state.selectedLandmark!.category,
+                            ),
                             size: 28,
                           ),
                         ),
@@ -244,7 +262,9 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
                         IconButton(
                           icon: const Icon(Icons.close_rounded),
                           onPressed: () {
-                            ref.read(mapNotifierProvider.notifier).selectLandmark(null);
+                            ref
+                                .read(mapNotifierProvider.notifier)
+                                .selectLandmark(null);
                           },
                         ),
                       ],
@@ -266,12 +286,17 @@ class _CampusMapPageState extends ConsumerState<CampusMapPage> {
                   padding: const EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      Icon(Icons.warning_rounded, color: theme.colorScheme.error),
+                      Icon(
+                        Icons.warning_rounded,
+                        color: theme.colorScheme.error,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           state.error!,
-                          style: TextStyle(color: theme.colorScheme.onErrorContainer),
+                          style: TextStyle(
+                            color: theme.colorScheme.onErrorContainer,
+                          ),
                         ),
                       ),
                     ],

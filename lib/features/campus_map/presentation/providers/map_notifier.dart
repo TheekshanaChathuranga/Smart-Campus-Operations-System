@@ -62,58 +62,63 @@ class MapNotifier extends StateNotifier<MapState> {
 
   /// Load sample campus landmarks.
   void _loadLandmarks() {
-    // Default campus center (example coordinates)
-    const campusCenter = LatLng(12.9716, 77.5946); // Bangalore coordinates as sample
+    const campusCenter = LatLng(6.0636, 80.5408);
 
     state = state.copyWith(
       landmarks: [
-        CampusLandmark(
-          name: 'Main Auditorium',
-          description: 'Central auditorium for events and lectures. Capacity: 500',
-          position: LatLng(campusCenter.latitude + 0.001, campusCenter.longitude + 0.001),
-          category: 'Building',
+        const CampusLandmark(
+          name: 'Auditorium',
+          description: 'Main auditorium for university events, conferences, and performances.',
+          position: LatLng(6.0648049247308595, 80.54089856047055),
+          category: 'venue',
         ),
-        CampusLandmark(
-          name: 'Central Library',
-          description: 'Open 8 AM - 12 AM. 3 floors, digital reading room available.',
-          position: LatLng(campusCenter.latitude - 0.001, campusCenter.longitude + 0.002),
-          category: 'Library',
+        const CampusLandmark(
+          name: 'Dean Office',
+          description: 'Administrative office for the Dean and university officials.',
+          position: LatLng(6.063465990313679, 80.5420948256443),
+          category: 'admin',
         ),
-        CampusLandmark(
-          name: 'CS Block',
-          description: 'Computer Science Department. Rooms CS-101 to CS-405.',
-          position: LatLng(campusCenter.latitude + 0.002, campusCenter.longitude - 0.001),
-          category: 'Department',
+        const CampusLandmark(
+          name: 'Old Canteen',
+          description: 'Traditional cafeteria serving local meals and snacks.',
+          position: LatLng(6.063289954864187, 80.54154765502672),
+          category: 'food',
         ),
-        CampusLandmark(
-          name: 'Sports Complex',
-          description: 'Indoor and outdoor facilities. Cricket, Football, Basketball.',
-          position: LatLng(campusCenter.latitude - 0.002, campusCenter.longitude - 0.002),
-          category: 'Sports',
+        const CampusLandmark(
+          name: 'New Canteen',
+          description: 'Modern cafeteria with a variety of fast food and beverages.',
+          position: LatLng(6.063060575252885, 80.54168712989001),
+          category: 'food',
         ),
-        CampusLandmark(
-          name: 'Innovation Center',
-          description: 'Startup incubation hub and maker space. 3 floors.',
-          position: LatLng(campusCenter.latitude + 0.003, campusCenter.longitude + 0.002),
-          category: 'Building',
+        const CampusLandmark(
+          name: 'Library',
+          description: 'Central library with extensive collections and reading spaces.',
+          position: LatLng(6.062932549380921, 80.54072689910033),
+          category: 'library',
         ),
-        CampusLandmark(
-          name: 'Cafeteria',
-          description: 'Main dining hall. Breakfast, lunch, dinner and snacks.',
-          position: LatLng(campusCenter.latitude, campusCenter.longitude - 0.001),
-          category: 'Food',
+        const CampusLandmark(
+          name: 'Girls Hostel',
+          description: 'Accommodation facility for female students.',
+          position: LatLng(6.06333796453792, 80.53973984622156),
+          category: 'hostel',
         ),
-        CampusLandmark(
-          name: 'Student Hostel Block A',
-          description: 'Residential block for 1st and 2nd year students.',
-          position: LatLng(campusCenter.latitude - 0.003, campusCenter.longitude + 0.001),
-          category: 'Hostel',
+        const CampusLandmark(
+          name: 'Boys Hostel',
+          description: 'Accommodation facility for male students.',
+          position: LatLng(6.0640821139285, 80.53957623139763),
+          category: 'hostel',
         ),
-        CampusLandmark(
-          name: 'Open Air Theatre',
-          description: 'Outdoor venue for cultural events. Capacity: 300',
-          position: LatLng(campusCenter.latitude + 0.001, campusCenter.longitude - 0.003),
-          category: 'Venue',
+        const CampusLandmark(
+          name: 'Maintenance Room',
+          description: 'Facility management and maintenance operations center.',
+          position: LatLng(6.063866070657854, 80.53976398602416),
+          category: 'maintenance',
+        ),
+        const CampusLandmark(
+          name: 'Union Office',
+          description: 'Headquarters for the Student Union and various clubs.',
+          position: LatLng(6.063331963303256, 80.54029707504574),
+          category: 'union',
         ),
       ],
       userLocation: campusCenter,

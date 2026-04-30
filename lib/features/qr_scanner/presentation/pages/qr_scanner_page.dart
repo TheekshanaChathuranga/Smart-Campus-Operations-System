@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:smart_campus_operations_system/core/di/providers.dart';
+import 'package:smart_campus_operations_system/features/qr_scanner/presentation/providers/staff_checkin_notifier.dart';
 
 /// QR Scanner page using mobile_scanner plugin.
-class QrScannerPage extends StatefulWidget {
-  const QrScannerPage({super.key});
+class QrScannerPage extends ConsumerStatefulWidget {
+  final bool isStaffMode;
+
+  const QrScannerPage({super.key, this.isStaffMode = false});
 
   @override
-  State<QrScannerPage> createState() => _QrScannerPageState();
+  ConsumerState<QrScannerPage> createState() => _QrScannerPageState();
 }
 
-class _QrScannerPageState extends State<QrScannerPage> {
+class _QrScannerPageState extends ConsumerState<QrScannerPage> {
   final MobileScannerController _controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.normal,
     facing: CameraFacing.back,
@@ -34,7 +39,98 @@ class _QrScannerPageState extends State<QrScannerPage> {
 
     setState(() => _hasScanned = true);
 
-    // Show result dialog
+    if (widget.isStaffMode) {
+      _handleStaffCheckin(barcode.rawValue!);
+    } else {
+      _showSimpleResultDialog(barcode.rawValue!);
+    }
+  }
+
+  void _handleStaffCheckin(String qrCode) async {
+    final notifier = ref.read(staffCheckinNotifierProvider.notifier);
+    await notifier.verify(qrCode);
+
+    if (!mounted) return;
+    
+    final state = ref.read(staffCheckinNotifierProvider);
+    
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        final theme = Theme.of(context);
+        final isSuccess = state.status == CheckinStatus.success;
+        final color = isSuccess ? Colors.green : Colors.red;
+        final icon = isSuccess ? Icons.check_circle : Icons.error;
+        final title = isSuccess ? 'Check-in Successful' : 'Check-in Failed';
+
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color.shade700),
+              ),
+              const SizedBox(width: 12),
+              Expanded(child: Text(title)),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isSuccess && state.result != null) ...[
+                Text(
+                  'Student: ${state.result!.studentName}',
+                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text('Event: ${state.result!.eventTitle}'),
+                const SizedBox(height: 4),
+                Text(
+                  'Registered: ${state.result!.registeredAt.toLocal().toString().split('.')[0]}',
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                ),
+              ] else if (!isSuccess && state.errorMessage != null) ...[
+                Text(
+                  state.errorMessage!,
+                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.error),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                notifier.reset();
+                Navigator.of(context).pop();
+                setState(() => _hasScanned = false);
+              },
+              child: const Text('Scan Again'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                notifier.reset();
+                Navigator.of(context).pop();
+                context.pop();
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(100, 44),
+              ),
+              child: const Text('Done'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSimpleResultDialog(String rawValue) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -75,7 +171,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: SelectableText(
-                  barcode.rawValue!,
+                  rawValue,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontFamily: 'monospace',
                   ),

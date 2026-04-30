@@ -7,6 +7,7 @@ class Schema {
   static const String eventsTable = 'events';
   static const String registrationsTable = 'registrations';
   static const String timetableTable = 'timetable';
+  static const String announcementsTable = 'announcements';
 
   // ─── Create Statements ──────────────────────────────
   static const String createUsersTable = '''
@@ -36,12 +37,28 @@ class Schema {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
       event_id INTEGER NOT NULL,
-      qr_code TEXT NOT NULL,
+      qr_code TEXT NOT NULL UNIQUE,
+      status TEXT NOT NULL DEFAULT 'registered',
       registered_at TEXT NOT NULL DEFAULT (datetime('now')),
       FOREIGN KEY (user_id) REFERENCES $usersTable(id) ON DELETE CASCADE,
       FOREIGN KEY (event_id) REFERENCES $eventsTable(id) ON DELETE CASCADE
     )
   ''';
+
+  static const String createAnnouncementsTable = '''
+    CREATE TABLE $announcementsTable (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'General',
+      author_id INTEGER NOT NULL,
+      published_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  ''';
+
+  /// Migration: add status column to existing registrations table.
+  static const String migrateRegistrationsAddStatus =
+      "ALTER TABLE $registrationsTable ADD COLUMN status TEXT NOT NULL DEFAULT 'registered'";
 
   static const String createTimetableTable = '''
     CREATE TABLE $timetableTable (
@@ -62,5 +79,6 @@ class Schema {
     createEventsTable,
     createRegistrationsTable,
     createTimetableTable,
+    createAnnouncementsTable,
   ];
 }
