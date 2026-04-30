@@ -3,8 +3,9 @@ class AppStrings {
   AppStrings._();
 
   // ─── App ─────────────────────────────────────────────
-  static const String appName = 'Smart Campus';
-  static const String appTagline = 'Your campus, simplified.';
+  static const String appName = 'CampusFlow';
+  static const String appTagline =
+      'University of Ruhuna, Faculty of Technology.';
 
   // ─── Auth ────────────────────────────────────────────
   static const String login = 'Log In';
