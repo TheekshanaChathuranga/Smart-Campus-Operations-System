@@ -27,7 +27,7 @@ class _SmartCampusAppState extends ConsumerState<SmartCampusApp> {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'Smart Campus',
+      title: 'CampusFlow',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

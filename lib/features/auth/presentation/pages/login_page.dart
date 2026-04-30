@@ -107,10 +107,10 @@ class _LoginPageState extends ConsumerState<LoginPage>
                           ),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.school_rounded,
-                          size: 56,
-                          color: theme.colorScheme.primary,
+                        child: Image.asset(
+                          'assets/icon_transparent.png',
+                          width: 80,
+                          height: 80,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -146,7 +146,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                               decoration: InputDecoration(
                                 labelText: AppStrings.email,
                                 prefixIcon: const Icon(Icons.email_outlined),
-                                hintText: 'student@campus.edu',
+                                hintText: 'Enter your email',
                               ),
                             ),
                             const SizedBox(height: 16),
